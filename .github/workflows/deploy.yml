@@ -1,0 +1,17 @@
+name: Deploy Infra
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Webhook
+        run: |
+          curl -X POST https://webhook.${{ vars.DOMAIN }}/hooks/infra \
+            -H "X-Webhook-Token: ${{ secrets.WEBHOOK_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}' \
+            --fail --silent --show-error

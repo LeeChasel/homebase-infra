@@ -1,0 +1,23 @@
+[
+  {
+    "id": "infra",
+    "execute-command": "/bin/sh",
+    "pass-arguments-to-command": [
+      {
+        "source": "string",
+        "name": "/etc/webhook/scripts/update-infra.sh"
+      }
+    ],
+    "command-working-directory": "/repos/infra",
+    "trigger-rule": {
+      "match": {
+        "type": "value",
+        "value": "{{getenv `WEBHOOK_TOKEN`}}",
+        "parameter": {
+          "source": "header",
+          "name": "X-Webhook-Token"
+        }
+      }
+    }
+  }
+]
