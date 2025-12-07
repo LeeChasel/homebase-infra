@@ -12,7 +12,8 @@ jobs:
         run: |
           curl -X POST https://webhook.${{ vars.DOMAIN }}/hooks/infra \
             -H "X-Webhook-Token: ${{ secrets.WEBHOOK_TOKEN }}" \
+            -H "CF-Access-Client-Id: ${{ secrets.CF_ACCESS_CLIENT_ID }}" \
+            -H "CF-Access-Client-Secret: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}" \
             -H "Content-Type: application/json" \
-            -H "User-Agent: GitHub-Actions" \
             -d '{}' \
             --fail --show-error
