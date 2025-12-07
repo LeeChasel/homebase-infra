@@ -14,4 +14,4 @@ jobs:
             -H "X-Webhook-Token: ${{ secrets.WEBHOOK_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{}' \
-            --fail --silent --show-error
+            --fail --show-error
