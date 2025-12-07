@@ -16,4 +16,4 @@ jobs:
             -H "CF-Access-Client-Secret: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}" \
             -H "Content-Type: application/json" \
             -d '{}' \
-            --fail --show-error
+            --fail -v --show-error
