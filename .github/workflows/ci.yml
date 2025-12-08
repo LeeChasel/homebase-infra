@@ -12,10 +12,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Caddy
-        uses: caddyserver/xcaddy-action@v2
-        with:
-          xcaddy-version: latest
+      - name: Install Caddy
+        run: |
+          CADDY_VERSION=$(curl -s https://api.github.com/repos/caddyserver/caddy/releases/latest | grep '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/')
+          curl -L "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_amd64.tar.gz" -o caddy.tar.gz
+          tar xzf caddy.tar.gz caddy
+          sudo mv caddy /usr/local/bin/
+          sudo chmod +x /usr/local/bin/caddy
+          caddy version
 
       - name: Validate & Format Caddyfile
         run: |
