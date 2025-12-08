@@ -26,7 +26,7 @@ A self-hosted infrastructure setup for managing services with automatic deployme
 - Domain name with DNS configured
 - Cloudflare account (for Access protection)
 - Ports available:
-  - `80` (HTTP) - or custom port via `CADDY_HTTP_PORT`
+  - `80` (HTTP) - exposed on port 8080 by default, configurable port via `CADDY_HTTP_PORT`
 
 ### Installing Podman
 
@@ -58,7 +58,7 @@ cp .env.example .env
 
 Edit `.env` with your configuration:
 
-```env
+```bash
 # Your domain name
 DOMAIN=yourdomain.com
 
@@ -85,7 +85,7 @@ podman network create proxy
 Start the infrastructure using Podman Compose:
 
 ```bash
-podman-compose up -d
+podman compose up -d
 ```
 
 Verify services are running:
@@ -148,7 +148,7 @@ graph TB
     Webhook -->|Execute Script| Infra
     Webhook -->|Container Commands| Podman
     Webhook -->|Read-only Access| Projects
-    Infra -->|git pull| GHA
+    GHA -->|git pull| Infra
 
     style GHA fill:#2088FF
     style CF fill:#F38020
@@ -223,7 +223,7 @@ curl -X POST https://webhook.yourdomain.com/hooks/infra \
 View logs for all services:
 
 ```bash
-podman-compose logs -f
+podman compose logs -f
 ```
 
 View logs for a specific service:
@@ -304,21 +304,16 @@ This project uses **Podman** instead of Docker for several advantages:
 
 For a detailed comparison, see the [official Podman documentation](https://docs.podman.io/en/latest/Introduction.html#podman-vs-docker).
 
-## Project Structure
+## Key Project Structure
 
 ```
 homebase-infra/
 ├── caddy/
 │   └── Caddyfile           # Caddy reverse proxy configuration
 ├── webhooks/
-│   ├── Dockerfile
 │   ├── hooks.json          # Webhook endpoint definitions
 │   └── scripts/
 │       └── update-infra.sh # Infrastructure update script
-├── .github/
-│   └── workflows/
-│       └── deploy.yml
 ├── compose.yml             # Podman Compose service definitions
-├── .env.example            # Example environment variables
-└── README.md
+└── .env.example            # Example environment variables
 ```
