@@ -1,0 +1,51 @@
+name: CI Validation
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Caddy
+        uses: caddyserver/xcaddy-action@v2
+        with:
+          xcaddy-version: latest
+
+      - name: Validate & Format Caddyfile
+        run: |
+          caddy validate --config caddy/Caddyfile
+          
+          caddy fmt --overwrite caddy/Caddyfile
+          if ! git diff --quiet caddy/Caddyfile; then
+            echo "::error::Caddyfile is not formatted. Run: caddy fmt --overwrite caddy/Caddyfile"
+            git diff caddy/Caddyfile
+            exit 1
+          fi
+
+      - name: Validate shell scripts with shellcheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.'
+          severity: error
+
+      - name: Lint Dockerfiles
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          recursive: true
+          failure-threshold: warning
+
+      - name: Validate Docker Compose
+        env:
+          DOMAIN: example.com
+          WEBHOOK_TOKEN: dummy-token
+          PROJECTS_DIR: /tmp/projects
+          XDG_RUNTIME_DIR: /run/user/1000
+          CADDY_HTTP_PORT: 8080
+        run: |
+          docker compose -f compose.yml config > /dev/null
