@@ -1,18 +1,18 @@
 {
-    auto_https off
-    admin off
+	auto_https off
+	admin off
 }
 
 :80 {
-    encode zstd gzip
+	encode zstd gzip
 
-    @webhook host webhook.{$DOMAIN}
-    handle @webhook {
-        reverse_proxy webhook:9000
-    }
+	@webhook host webhook.{$DOMAIN}
+	handle @webhook {
+		reverse_proxy webhook:9000
+	}
 
-    # Unmatch fallback
-    handle {
-        respond "Not Found" 404
-    }
+	# Unmatch fallback
+	handle {
+		respond "Not Found" 404
+	}
 }
